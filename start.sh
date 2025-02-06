@@ -1,2 +1,2 @@
 #!/bin/bash
-python3 telegram_bot.py
+python telegram_bot.py
