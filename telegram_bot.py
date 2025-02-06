@@ -29,7 +29,7 @@ with open(os.path.join(script_dir, 'foto.json'), 'rt') as jsonfile:
 
 # Подключение к Google Sheets с данными из файла
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_data, scope)
+creds = creds = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
 client = gspread.authorize(creds)
 spreadsheet = client.open("Проект фото")
 sheet = spreadsheet.worksheet("Проект фото")
