@@ -25,7 +25,7 @@ if not TOKEN:
 # Получаем путь к текущему скрипту и загружаем фото.json
 script_dir = os.path.dirname(os.path.abspath(__file__))  # Путь к текущей директории
 with open(os.path.join(script_dir, 'foto.json'), 'rt') as jsonfile:
-    credentials_data = json.load(jsonfile)
+   credentials_data = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
 
 # Подключение к Google Sheets с данными из файла
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
