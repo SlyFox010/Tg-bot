@@ -9,25 +9,26 @@ from aiogram.filters import Command
 from aiogram import F
 from oauth2client.service_account import ServiceAccountCredentials
 from dotenv import load_dotenv
-from pathlib import Path
 
 # Настраиваем логирование
 logging.basicConfig(level=logging.INFO)
 
-# Загружаем .env файл
-env_path = Path("C:/python_projects/.env")  # Указываем полный путь
-load_dotenv(dotenv_path=env_path)
+# Загружаем переменные окружения
+load_dotenv()
 
 TOKEN = os.getenv("TOKEN")
 if not TOKEN:
     raise ValueError("Ошибка: переменная окружения TOKEN не задана!")
 
-# Получаем путь к текущему скрипту и загружаем фото.json
-script_dir = os.path.dirname(os.path.abspath(__file__))  # Путь к текущей директории
-with open(os.path.join(script_dir, 'foto.json'), 'rt') as jsonfile:
-   credentials_data = json.loads(os.getenv("GOOGLE_CREDENTIALS"))
+# Загружаем данные для Google API из переменной окружения
+credentials_json = os.getenv("GOOGLE_CREDENTIALS")
 
-# Подключение к Google Sheets с данными из файла
+if not credentials_json:
+    raise ValueError("Ошибка: Переменная окружения GOOGLE_CREDENTIALS не найдена!")
+
+credentials_data = json.loads(credentials_json)
+
+# Подключение к Google Sheets
 scope = ["https://www.googleapis.com/auth/spreadsheets", "https://www.googleapis.com/auth/drive"]
 creds = ServiceAccountCredentials.from_json_keyfile_dict(credentials_data, scope)
 client = gspread.authorize(creds)
@@ -51,7 +52,7 @@ def get_category_keyboard():
             [KeyboardButton(text="Ракурс")],
             [KeyboardButton(text="Рулетка")],
             [KeyboardButton(text="Валидно")],
-            [KeyboardButton(text="Фото между ног")],  # Новый вариант ответа
+            [KeyboardButton(text="Фото между ног")],
             [KeyboardButton(text="Завершить работу")]
         ],
         resize_keyboard=True,
@@ -72,7 +73,7 @@ async def get_unprocessed_photo():
 
 @dp.message(F.text == "Начать задание")
 async def send_photo(message: Message):
-    index, photo_url = await get_unprocessed_photo()  # Исправлено!
+    index, photo_url = await get_unprocessed_photo()
 
     if index:
         if not photo_url:
